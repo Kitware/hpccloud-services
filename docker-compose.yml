@@ -1,0 +1,145 @@
+version: '3'
+services:
+  mongodb:
+    image: mongo:3.6
+    networks:
+      - hc
+    volumes:
+        - mongodb.hc:/data/db
+
+  girder:
+    image: olearypatrick/hpccloud:girder
+    build:
+      context: .
+      dockerfile: docker/girder/Dockerfile
+    command: -d mongodb://mongodb:27017/girder
+    volumes:
+      - assetstore.hc:/assetstore
+      - keys.hc:/keys
+      - pvw.hc:/pvw
+    networks:
+      - hc
+    ports:
+      - "8080:8080"
+    extra_hosts:
+      - "girder:127.0.0.1"
+    depends_on:
+      - mongodb
+    environment:
+      - GIRDER_PORT=8080 
+
+  command:
+    image: olearypatrick/hpccloud:celery-pyfr
+    build:
+      context: .
+      dockerfile: docker/celery-pyfr/Dockerfile
+    hostname: command
+    networks:
+      - hc
+    volumes:
+      - keys.hc:/keys
+    command: celery worker --app=cumulus -b amqp://guest:guest@rabbitmq/ -n command --config=cumulus.celery.commandconfig --loglevel=INFO
+    depends_on:
+      - rabbitmq
+    environment:
+     - GIRDER_PORT=8080
+    
+  monitor:
+    image: olearypatrick/hpccloud:celery-pyfr
+    build:
+      context: .
+      dockerfile: docker/celery-pyfr/Dockerfile
+    hostname: monitor
+    volumes:
+      - keys.hc:/keys
+    networks:
+      - hc
+    command: celery worker --app=cumulus -b amqp://guest:guest@rabbitmq/ -n monitor -Q monitor --config=cumulus.celery.monitorconfig --loglevel=INFO
+    depends_on:
+      - rabbitmq
+    environment:
+     - GIRDER_PORT=8080
+
+  rabbitmq:
+    image: rabbitmq
+    networks:
+      - hc
+
+  nginx:
+    image: olearypatrick/hpccloud:nginx
+    build:
+      context: .
+      dockerfile: docker/nginx/Dockerfile
+    networks:
+      - hc
+    ports:
+      - "8888:8888"
+    depends_on:
+      - girder
+      - apache
+
+  apache:
+    image: olearypatrick/hpccloud:apache
+    build:
+      context: .
+      dockerfile: docker/apache/Dockerfile
+    volumes:
+     - pvw.hc:/pvw
+    networks:
+      - hc
+    ports:
+      - "9000:9000"
+
+  ansible:
+    image: olearypatrick/hpccloud:ansible
+    build:
+      context: .
+      dockerfile: docker/ansible/Dockerfile
+    hostname: ansible
+    volumes:
+     - ./ansible:/ansible
+    networks:
+      - hc
+    depends_on:
+      - girder
+      - command
+      - monitor
+      - compute
+      - visualize
+
+  compute:
+    image: olearypatrick/hpccloud:compute-pyfr
+    build:
+      context: .
+      dockerfile: docker/compute-pyfr/Dockerfile
+    hostname: compute
+    volumes:
+     - scratch.hc:/scratch
+    networks:
+      - hc
+    ports:
+      - "2201:22"
+
+  visualize:
+    image: olearypatrick/hpccloud:visualize-osmesa
+    build:
+      context: .
+      dockerfile: docker/visualize-osmesa/Dockerfile
+    hostname: visualize
+    volumes:
+     - scratch.hc:/scratch
+    networks:
+      - hc
+    ports:
+      - "2202:22"
+      - "9090:9090"
+
+networks:
+  hc:
+
+volumes:
+  pvw.hc:
+  assetstore.hc:
+  keys.hc:
+  mongodb.hc:
+  scratch.hc:

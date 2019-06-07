@@ -1,0 +1,7 @@
+version: '3'
+services:
+  visualize:
+    image: olearypatrick/hpccloud:visualize-osmesa
+    hostname: visualize
+    ports:
+      - "2202:22"
