@@ -3,6 +3,6 @@
 ``
 docker build --pull -f docker/bionic-python/Dockerfile .
 docker images
-docker tag [IMAGE ID] olearypatrick/hpccloud:bionic-python
-docker push olearypatrick/hpccloud:bionic-python
+docker tag [IMAGE ID] kitware/hpccloud:bionic-python
+docker push kitware/hpccloud:bionic-python
 ``

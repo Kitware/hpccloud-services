@@ -1,6 +1,6 @@
-# Docker file for ParFlow master
+# Docker file for compute Parflow
 
-FROM kitware/hpccloud:celery
+FROM kitware/hpccloud:sge-ssh
 LABEL maintainer="patrick.oleary@kitware.com" \
       version="1.0" \
       parflow.version="master"
@@ -11,13 +11,14 @@ RUN apt-get update && \
                        g++-6 \
                        g++-6-multilib \
                        gfortran-6 \
-                       libopenblas-dev \
-                       liblapack-dev \
-                       openssh-client \
-                       openssh-server \
                        openmpi-bin \
                        libopenmpi-dev \
+                       git \
+                       curl \
                        cmake \
+                       strace \
+                       unzip \
+                       wget \
                        --no-install-recommends && \
     update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-6 60 \
                         --slave /usr/bin/g++ g++ /usr/bin/g++-6 \
@@ -73,3 +74,5 @@ RUN git clone https://gitlab.kitware.com/parflow/parflow.git parflow && \
 
 # Allow root to run mpiexec (kludge)
 COPY ./docker/celery-parflow/run /parflow/bin/run
+
+RUN apt-get clean && rm -rf /var/lib/apt/lists/*

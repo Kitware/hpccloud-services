@@ -1,0 +1,241 @@
+- name: Create Girder demo user
+  girder:
+    host: "{{girder_host}}"
+    port: "{{girder_port}}"
+    scheme: "{{girder_scheme}}"
+    apiRoot: "{{girder_api_root}}"
+    user:
+      firstName: "demo"
+      lastName: "demo"
+      login: "demo"
+      password: "{{ demo_password }}"
+      email: "demo@kitware.com"
+    state: present
+
+- name: Authenticate with Girder
+  girder:
+    host: "{{girder_host}}"
+    port: "{{girder_port}}"
+    scheme: "{{girder_scheme}}"
+    apiRoot: "{{girder_api_root}}"
+    username: "demo"
+    password: "{{demo_password}}"
+    get:
+      path: "user/me"
+  register: me
+
+- name: Get list of current clusters
+  girder:
+    host: "{{girder_host}}"
+    port: "{{girder_port}}"
+    scheme: "{{girder_scheme}}"
+    apiRoot: "{{girder_api_root}}"
+    username: "demo"
+    password: "{{demo_password}}"
+    get:
+      path: "clusters"
+      json: {
+        "type": "trad"
+      }
+  register: clusters
+
+- name: Create compute cluster
+  girder:
+    host: "{{girder_host}}"
+    port: "{{girder_port}}"
+    scheme: "{{girder_scheme}}"
+    apiRoot: "{{girder_api_root}}"
+    username: "demo"
+    password: "{{demo_password}}"
+    post:
+      path: "clusters"
+      json: {
+        "name": "compute",
+        "type": "trad",
+        "config": {
+          "host": compute,
+          "ssh": {
+            "user": "demo"
+          },
+          "jobOutputDir": "/scratch",
+          "pyfr": {
+            "openmp": [
+              {
+                 "cblas": "/usr/lib/libblas.so",
+                 "name": "OpenMP"
+              }
+            ]
+          }
+        }
+      }
+  register: compute_cluster
+  when: clusters.gc_return|length == 0
+
+- name: Set compute cluster from output
+  set_fact:
+    compute_cluster: "{{ compute_cluster.gc_return }}"
+  when: clusters.gc_return|length == 0
+
+- name: Create visualize cluster
+  girder:
+    host: "{{girder_host}}"
+    port: "{{girder_port}}"
+    scheme: "{{girder_scheme}}"
+    apiRoot: "{{girder_api_root}}"
+    username: "demo"
+    password: "{{demo_password}}"
+    post:
+      path: "clusters"
+      json: {
+        "name": "visualize",
+        "type": "trad",
+        "config": {
+          "host": visualize,
+          "ssh": {
+            "user": "demo"
+          },
+          "jobOutputDir": "/scratch",
+          "paraview": {
+            "installDir": "/ParaView"
+          }
+        }
+      }
+  register: visualize_cluster
+  when: clusters.gc_return|length == 0
+
+- name: Set visualize cluster from output
+  set_fact:
+    visualize_cluster: "{{ visualize_cluster.gc_return }}"
+  when: clusters.gc_return|length == 0
+
+- name: Set 1st cluster to compute cluster from output
+  set_fact:
+    compute_cluster: "{{ clusters.gc_return[0] }}"
+  when: 
+    - clusters.gc_return|length == 2
+    - clusters.gc_return[0].name == "compute"
+
+- name: Set 1st cluster to visualize cluster from output
+  set_fact:
+    visualize_cluster: "{{ clusters.gc_return[0] }}"
+  when: 
+    - clusters.gc_return|length == 2
+    - clusters.gc_return[0].name == "visualize"
+
+- name: Set 2nd cluster to compute cluster from output
+  set_fact:
+    compute_cluster: "{{ clusters.gc_return[1] }}"
+  when: 
+    - clusters.gc_return|length == 2
+    - clusters.gc_return[1].name == "compute"
+
+- name: Set 2nd cluster to visualize cluster from output
+  set_fact:
+    visualize_cluster: "{{ clusters.gc_return[1] }}"
+  when: 
+    - clusters.gc_return|length == 2
+    - clusters.gc_return[1].name == "visualize"
+
+- name: Wait for compute cluster to move into the created state
+  uri:
+    headers:
+      Girder-Token: "{{ me.token }}"
+    body_format: json
+    url: "{{girder_scheme}}://{{girder_host}}:{{girder_port}}{{girder_api_root}}/clusters/{{compute_cluster._id}}/status"
+    status_code: 200
+  register: result
+  until: result.json.status == 'created' or result.json.status == 'running'
+  retries: 15
+  delay: 1
+
+- name: Refresh compute cluster so we have the public key
+  girder:
+    host: "{{girder_host}}"
+    port: "{{girder_port}}"
+    scheme: "{{girder_scheme}}"
+    apiRoot: "{{girder_api_root}}"
+    token: "{{ me.token }}"
+    get:
+      path: "clusters/{{compute_cluster._id}}"
+      json: {
+        "type": "trad"
+      }
+  register: compute_cluster
+
+- name: Set compute_cluster from output
+  set_fact:
+    compute_cluster: "{{ compute_cluster.gc_return }}"
+
+- name: Add public key to authorize_keys on compute cluster
+  authorized_key:
+    user: demo
+    key: "{{ compute_cluster.config.ssh.publicKey }}"
+  delegate_to: compute
+
+- name: Start compute_cluster
+  girder:
+    host: "{{girder_host}}"
+    port: "{{girder_port}}"
+    scheme: "{{girder_scheme}}"
+    apiRoot: "{{girder_api_root}}"
+    token: "{{ me.token }}"
+    put:
+      path: "clusters/{{compute_cluster['_id']}}/start"
+
+- name: Wait for compute cluster to move into the running state
+  uri:
+    headers:
+      Girder-Token: "{{ me.token }}"
+    body_format: json
+    url: "{{girder_scheme}}://{{girder_host}}:{{girder_port}}{{girder_api_root}}/clusters/{{compute_cluster._id}}/status"
+    status_code: 200
+  register: result
+  until: result.json.status == 'running'
+  retries: 10
+  delay: 1
+
+- name: Wait for visualize cluster to move into the created state
+  uri:
+    headers:
+      Girder-Token: "{{ me.token }}"
+    body_format: json
+    url: "{{girder_scheme}}://{{girder_host}}:{{girder_port}}{{girder_api_root}}/clusters/{{visualize_cluster._id}}/status"
+    status_code: 200
+  register: result
+  until: result.json.status == 'created' or result.json.status == 'running'
+  retries: 15
+  delay: 1
+
+- name: Refresh visualize cluster so we have the public key
+  girder:
+    host: "{{girder_host}}"
+    port: "{{girder_port}}"
+    scheme: "{{girder_scheme}}"
+    apiRoot: "{{girder_api_root}}"
+    token: "{{ me.token }}"
+    get:
+      path: "clusters/{{visualize_cluster._id}}"
+      json: {
+        "type": "trad"
+      }
+  register: visualize_cluster
+
+- name: Set visualize_cluster from output
+  set_fact:
+    visualize_cluster: "{{ visualize_cluster.gc_return }}"
+
+- name: Add public key to authorize_keys on visualize cluster
+  authorized_key:
+    user: demo
+    key: "{{ visualize_cluster.config.ssh.publicKey }}"
+  delegate_to: visualize
+
+- name: Start compute_cluster
+  girder:
+    host: "{{girder_host}}"
+    port: "{{girder_port}}"
+    scheme: "{{girder_scheme}}"
+    apiRoot: "{{girder_api_root}}"
+    token: "{{ me.token }}"
+    put:
+      path: "clusters/{{visualize_cluster['_id']}}/start"

@@ -1,0 +1,8 @@
+dev: yes
+girder_host: girder
+girder_port: 8080
+girder_api_root: '/api/v1'
+girder_scheme: 'http'
+hpccloud_password: letmein
+cumulus_password: letmein
+demo_password: letmein

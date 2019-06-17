@@ -3,6 +3,6 @@
 ``
 docker build --pull -f docker/sge-ssh/Dockerfile .
 docker images
-docker tag [IMAGE ID] olearypatrick/hpccloud:sge-ssh
-docker push olearypatrick/hpccloud:sge-ssh
+docker tag [IMAGE ID] kitware/hpccloud:sge-ssh
+docker push kitware/hpccloud:sge-ssh
 ``

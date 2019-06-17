@@ -8,7 +8,7 @@ services:
         - mongodb.hc:/data/db
 
   girder:
-    image: olearypatrick/hpccloud:girder
+    image: kitware/hpccloud:girder
     build:
       context: .
       dockerfile: docker/girder/Dockerfile
@@ -29,7 +29,7 @@ services:
       - GIRDER_PORT=8080 
 
   command:
-    image: olearypatrick/hpccloud:celery-pyfr
+    image: kitware/hpccloud:celery-pyfr
     build:
       context: .
       dockerfile: docker/celery-pyfr/Dockerfile
@@ -45,7 +45,7 @@ services:
      - GIRDER_PORT=8080
     
   monitor:
-    image: olearypatrick/hpccloud:celery-pyfr
+    image: kitware/hpccloud:celery-pyfr
     build:
       context: .
       dockerfile: docker/celery-pyfr/Dockerfile
@@ -66,7 +66,7 @@ services:
       - hc
 
   nginx:
-    image: olearypatrick/hpccloud:nginx
+    image: kitware/hpccloud:nginx
     build:
       context: .
       dockerfile: docker/nginx/Dockerfile
@@ -79,7 +79,7 @@ services:
       - apache
 
   apache:
-    image: olearypatrick/hpccloud:apache
+    image: kitware/hpccloud:apache
     build:
       context: .
       dockerfile: docker/apache/Dockerfile
@@ -91,13 +91,11 @@ services:
       - "9000:9000"
 
   ansible:
-    image: olearypatrick/hpccloud:ansible
+    image: kitware/hpccloud:ansible
     build:
       context: .
       dockerfile: docker/ansible/Dockerfile
     hostname: ansible
-    volumes:
-     - ./ansible:/ansible
     networks:
       - hc
     depends_on:
@@ -108,7 +106,7 @@ services:
       - visualize
 
   compute:
-    image: olearypatrick/hpccloud:compute-pyfr
+    image: kitware/hpccloud:compute-pyfr
     build:
       context: .
       dockerfile: docker/compute-pyfr/Dockerfile
@@ -121,7 +119,7 @@ services:
       - "2201:22"
 
   visualize:
-    image: olearypatrick/hpccloud:visualize-osmesa
+    image: kitware/hpccloud:visualize-osmesa
     build:
       context: .
       dockerfile: docker/visualize-osmesa/Dockerfile
