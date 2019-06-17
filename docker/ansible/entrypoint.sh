@@ -1,3 +1,3 @@
 #!/bin/sh
-ansible-galaxy install -r requirements.yml
+cd /ansible
 ansible-playbook -i inventory/localhost dev.yml

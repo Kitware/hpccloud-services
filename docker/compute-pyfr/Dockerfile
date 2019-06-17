@@ -1,6 +1,6 @@
 # Docker file for compute PyFR 1.8.0
 
-FROM olearypatrick/hpccloud:sge-ssh
+FROM kitware/hpccloud:sge-ssh
 LABEL maintainer="patrick.oleary@kitware.com" \
       version="1.0" \
       pyfr.version="1.8.0"

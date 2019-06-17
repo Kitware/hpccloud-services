@@ -1,7 +1,0 @@
-version: '3'
-services:
-  sge-ssh:
-    image: olearypatrick/hpccloud:sge-ssh
-    hostname: sge-master
-    ports:
-      - "2201:22"

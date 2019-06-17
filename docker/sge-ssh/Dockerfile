@@ -1,6 +1,6 @@
 # Docker file for sge + ssh
 
-FROM olearypatrick/hpccloud:bionic-python
+FROM kitware/hpccloud:bionic-python
 LABEL maintainer="patrick.oleary@kitware.com" \
       version="1.0"
 

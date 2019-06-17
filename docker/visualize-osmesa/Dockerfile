@@ -1,6 +1,6 @@
 # Docker file for visualize OSMesa ParaView 5.6.0
 
-FROM olearypatrick/hpccloud:sge-ssh
+FROM kitware/hpccloud:sge-ssh
 LABEL maintainer="patrick.oleary@kitware.com" \
       version="1.0" \
       ParaView.version="5.6.0"

@@ -1,6 +1,6 @@
 # Docker file for celery + PyFR 1.8.0
 
-FROM olearypatrick/hpccloud:celery
+FROM kitware/hpccloud:celery
 LABEL maintainer="patrick.oleary@kitware.com" \
       version="1.0" \
       pyfr.version="1.8.0"

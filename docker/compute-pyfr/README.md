@@ -3,8 +3,8 @@
 ``
 docker build --pull -f docker/compute-pyfr/Dockerfile .
 docker images
-docker tag [IMAGE ID] olearypatrick/hpccloud:compute-pyfr
-docker push olearypatrick/hpccloud:compute-pyfr
+docker tag [IMAGE ID] kitware/hpccloud:compute-pyfr
+docker push kitware/hpccloud:compute-pyfr
 ``
 
 # Testing PyFR installation

@@ -8,7 +8,10 @@ RUN apt-get update && apt-get -y install \
 RUN pip install ansible && \
   pip install girder_client
 
-WORKDIR /ansible
+COPY ./ansible /ansible
+
+RUN cd /ansible && \
+    ansible-galaxy install -r requirements.yml
 
 COPY ./docker/ansible/entrypoint.sh /entrypoint.sh
 COPY ./docker/ansible/wait-for-it.sh /wait-for-it.sh

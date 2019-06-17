@@ -3,6 +3,6 @@
 ``
 docker build --pull -f docker/girder/Dockerfile .
 docker images
-docker tag [IMAGE ID] olearypatrick/hpccloud:girder
-docker push olearypatrick/hpccloud:girder
+docker tag [IMAGE ID] kitware/hpccloud:girder
+docker push kitware/hpccloud:girder
 ``

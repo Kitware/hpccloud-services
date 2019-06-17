@@ -21,8 +21,7 @@ COPY ./docker/girder/config.json /cumulus/cumulus/conf/config.json
 # Enable proxy support
 COPY ./docker/girder/girder.local.conf /girder/girder/conf/girder.local.cfg
 
-# Copy over hpccloud
-COPY . /hpccloud
+RUN git clone https://github.com/Kitware/HPCCloud.git /hpccloud
 
 # Install hpccloud - girder server
 RUN pip  install --no-cache-dir -r /hpccloud/requirements.txt && \

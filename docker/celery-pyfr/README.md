@@ -3,8 +3,8 @@
 ``
 docker build --pull -f docker/celery-pyfr/Dockerfile .
 docker images
-docker tag [IMAGE ID] olearypatrick/hpccloud:celery-pyfr
-docker push olearypatrick/hpccloud:celery-pyfr
+docker tag [IMAGE ID] kitware/hpccloud:celery-pyfr
+docker push kitware/hpccloud:celery-pyfr
 ``
 
 # Testing PyFR installation

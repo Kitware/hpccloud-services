@@ -1,4 +1,4 @@
-FROM olearypatrick/hpccloud:bionic-python
+FROM kitware/hpccloud:bionic-python
 
 LABEL maintainer="patrick.oleary@kitware.com" \
       version="1.0"
@@ -23,8 +23,7 @@ COPY ./docker/celery/config.json /cumulus/cumulus/conf/config.json
 
 RUN chown -R celery  /cumulus
 
-# Copy over hpccloud
-COPY . /hpccloud
+RUN git clone https://github.com/Kitware/HPCCloud.git /hpccloud
 
 # Change ownership
 RUN chown -R celery  /hpccloud
