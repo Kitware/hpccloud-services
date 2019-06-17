@@ -1,0 +1,3 @@
+girder_host: localhost
+girder_port: 8080
+girder_plugins: ['hpccloud', 'pvwproxy']
