@@ -1,10 +1,10 @@
 # HPCCloud Services
 
-### Goal
+## Goal
 
 Streamline a test deployment environment.
 
-## Running it
+### Running it
 
 ```
 git clone https://github.com/Kitware/hpccloud-services.git
@@ -25,5 +25,17 @@ If you want to stop the services you can run the command
 ```
 docker-compose down
 ```
+
+### Running w/ GPU accleration
+
+In order to run compute and visualize containers which can utilize the GPU on your system:
+
+```
+docker-compose -f docker-compose.yml -f docker-compose-nvidia.yml up -d
+```
+
+This will apply the service overrides found in `docker-compose-nvidia.yml`, which make use of the `nvidia` container runtime.
+
+### Development workflow
 
 [Developent workflow][dev_workflow.md] has more complete instructions on troubleshooting and manual testing.

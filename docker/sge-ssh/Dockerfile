@@ -1,21 +1,31 @@
 # Docker file for sge + ssh
+#
+# To base resulting image off a different base image, use the "BASE_IMAGE"
+# build argument:
+#
+#   docker build --build-arg BASE_IMAGE=kitware/hpccloud:nvidia-bionic-python -t kitware/hpccloud:nvidia-sge-ssh .
+#
 
-FROM kitware/hpccloud:bionic-python
+ARG BASE_IMAGE=kitware/hpccloud:bionic-python
+
+FROM ${BASE_IMAGE}
 LABEL maintainer="patrick.oleary@kitware.com" \
       version="1.0"
 
 ENV SGEMASTER=sge-master
 
 RUN apt-get update && \
-    apt-get install -y openssh-client \
-                       openssh-server \
-                       --no-install-recommends
+    apt-get install -y --no-install-recommends \
+        openssh-client \
+        openssh-server && \
+    apt-get clean && rm -rf /var/lib/apt/lists/*
 
 RUN mkdir /var/run/sshd && \
     chmod 0755 /var/run/sshd && \
     sed -ri 's/UsePAM yes/UsePAM no/g' /etc/ssh/sshd_config
 
 COPY ./docker/sge-ssh/sge-config /sge-config
+COPY ./docker/sge-ssh/patch/* /tmp/
 
 RUN echo "$(grep "$HOSTNAME" /etc/hosts | awk '{print $1;}') $SGEMASTER" >> /etc/hosts && \
     echo "domain $SGEMASTER" >> /etc/resolv.conf && \
@@ -27,8 +37,18 @@ RUN echo "$(grep "$HOSTNAME" /etc/hosts | awk '{print $1;}') $SGEMASTER" >> /etc
     echo "gridengine-client shared/gridenginemaster string  $SGEMASTER" | debconf-set-selections && \
     echo "gridengine-client shared/gridenginecell   string  default"    | debconf-set-selections && \
     echo "gridengine-client shared/gridengineconfig boolean false"      | debconf-set-selections && \
-    echo "exim4 exim4/main_mailer_type select No configuration"         | debconf-set-selections && \
+    apt-get update && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y gridengine-master gridengine-exec gridengine-client && \
+    apt-get clean && rm -rf /var/lib/apt/lists/* && \
+    # The next 5 lines patch broken Ubuntu gridengine packages, ala:
+    #   https://bugs.launchpad.net/ubuntu/+source/gridengine/+bug/1633251
+    # and:
+    #   https://bugs.launchpad.net/ubuntu/+source/gridengine/+bug/1774302
+    cp /tmp/spooldefaults.bin /usr/lib/gridengine/ && \
+    cp /tmp/libspoolb.so /usr/lib/gridengine/ && \
+    cp /tmp/libspoolc.so /usr/lib/gridengine/ && \
+    cd /usr/lib/x86_64-linux-gnu && \
+    ln -s libjemalloc.so.1 libjemalloc.so.2 && \
     su -c "/usr/share/gridengine/scripts/init_cluster /var/lib/gridengine default /var/spool/gridengine/spooldb sgeadmin" -s /bin/bash sgeadmin && \
     echo $SGEMASTER | tee /var/lib/gridengine/default/common/act_qmaster && \
     chown -R sgeadmin:sgeadmin /var/lib/gridengine/default/common/act_qmaster && \
@@ -41,9 +61,7 @@ RUN echo "$(grep "$HOSTNAME" /etc/hosts | awk '{print $1;}') $SGEMASTER" >> /etc
     /sge-config/addworker.sh compute.q $SGEMASTER 1 && \
     update-rc.d gridengine-master enable && \
     service gridengine-exec restart && \
-    update-rc.d gridengine-exec enable && \
-    service exim4 stop && \
-    update-rc.d exim4 disable
+    update-rc.d gridengine-exec enable
 
 EXPOSE 22
 EXPOSE 6444
@@ -62,7 +80,7 @@ RUN echo 'root:please' | chpasswd
 
 RUN mkdir /scratch && \
     chmod 777 /scratch
-    
+
 COPY ./docker/sge-ssh/entrypoint.sh /entrypoint.sh
 
 ENTRYPOINT ["/entrypoint.sh"]
@@ -71,4 +89,4 @@ COPY ./docker/sge-ssh/supervisord.conf /etc/supervisord.conf
 
 CMD ["/usr/local/bin/supervisord", "-c", "/etc/supervisord.conf"]
 
-RUN apt-get clean && rm -rf /var/lib/apt/lists/*
+# RUN apt-get clean && rm -rf /var/lib/apt/lists/*

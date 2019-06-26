@@ -1,4 +1,5 @@
-FROM kitware/hpccloud:bionic-python
+ARG BASE_IMAGE=kitware/hpccloud:bionic-python
+FROM ${BASE_IMAGE}
 
 LABEL maintainer="patrick.oleary@kitware.com" \
       version="1.0"
@@ -10,9 +11,9 @@ RUN git clone https://github.com/Kitware/cumulus.git /cumulus && \
   cd /cumulus && \
   # git checkout v1.0.0 && \
   cd / && \
-  pip install --no-cache-dir -r /cumulus/requirements.txt && \
-  pip install --no-cache-dir -e /cumulus && \
-  pip install --no-cache-dir girder
+  pip3 install --no-cache-dir -r /cumulus/requirements.txt && \
+  pip3 install --no-cache-dir -e /cumulus && \
+  pip3 install --no-cache-dir girder
 
 # TEMP cumulus fix - requirements.txt needs to be updated for AWS, in progress.
 # COPY ./cumulus/cumulus/girderclient.py /cumulus/cumulus/girderclient.py

@@ -6,22 +6,22 @@ LABEL maintainer="patrick.oleary@kitware.com" \
       parflow.version="master"
 
 RUN apt-get update && \
-    apt-get install -y build-essential \
-                       gcc-6 \
-                       g++-6 \
-                       g++-6-multilib \
-                       gfortran-6 \
-                       libopenblas-dev \
-                       liblapack-dev \
-                       openssh-client \
-                       openssh-server \
-                       openmpi-bin \
-                       libopenmpi-dev \
-                       cmake \
-                       --no-install-recommends && \
+    apt-get install -y --no-install-recommends \
+        gcc-6 \
+        g++-6 \
+        g++-6-multilib \
+        gfortran-6 \
+        libopenblas-dev \
+        liblapack-dev \
+        openssh-client \
+        openssh-server \
+        openmpi-bin \
+        libopenmpi-dev \
+        cmake && \
     update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-6 60 \
                         --slave /usr/bin/g++ g++ /usr/bin/g++-6 \
-                        --slave /usr/bin/gfortran gfortran /usr/bin/gfortran-6
+                        --slave /usr/bin/gfortran gfortran /usr/bin/gfortran-6 && \
+    apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Allow root to mpiexec (not in current openmpi version for Ubuntu 18.04)
 #ENV OMPI_ALLOW_RUN_AS_ROOT=1

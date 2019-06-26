@@ -6,26 +6,26 @@ LABEL maintainer="patrick.oleary@kitware.com" \
       pyfr.version="1.8.0"
 
 RUN apt-get update && \
-    apt-get install -y build-essential \
-                       gcc-6 \
-                       g++-6 \
-                       g++-6-multilib \
-                       gfortran-6 \
-                       libopenblas-dev \
-                       liblapack-dev \
-                       openssh-client \
-                       openssh-server \
-                       openmpi-bin \
-                       libopenmpi-dev \
-                       libhdf5-dev \
-                       libmetis-dev \
-                       strace \
-                       unzip \
-                       wget \
-                       --no-install-recommends && \
+    apt-get install -y --no-install-recommends \
+        gcc-6 \
+        g++-6 \
+        g++-6-multilib \
+        gfortran-6 \
+        libopenblas-dev \
+        liblapack-dev \
+        openssh-client \
+        openssh-server \
+        openmpi-bin \
+        libopenmpi-dev \
+        libhdf5-dev \
+        libmetis-dev \
+        strace \
+        unzip \
+        wget && \
     update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-6 60 \
                         --slave /usr/bin/g++ g++ /usr/bin/g++-6 \
                         --slave /usr/bin/gfortran gfortran /usr/bin/gfortran-6 && \
+    apt-get clean && rm -rf /var/lib/apt/lists/* && \
     pip3 install appdirs \
                  numpy \
                  pytools \
@@ -43,5 +43,3 @@ RUN wget -q -O PyFR-1.8.0.zip http://www.pyfr.org/download/PyFR-1.8.0.zip && \
     cd /
 
 RUN chown -R celery  /PyFR-1.8.0
-
-RUN apt-get clean && rm -rf /var/lib/apt/lists/*
