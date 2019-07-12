@@ -26,7 +26,7 @@ services:
     depends_on:
       - mongodb
     environment:
-      - GIRDER_PORT=8080 
+      - GIRDER_PORT=8080
 
   command:
     image: kitware/hpccloud:celery-pyfr
@@ -43,7 +43,7 @@ services:
       - rabbitmq
     environment:
      - GIRDER_PORT=8080
-    
+
   monitor:
     image: kitware/hpccloud:celery-pyfr
     build:

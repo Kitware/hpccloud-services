@@ -1,9 +1,11 @@
 FROM node:10 AS build
 
-RUN git clone https://github.com/Kitware/HPCCloud.git /hpccloud && \
-    cd /hpccloud && \
-    npm install && \
-    npm run build:release
+RUN echo 'test1' > testx && rm testx && \
+  git clone https://github.com/Kitware/HPCCloud.git /hpccloud && \
+  cd /hpccloud && \
+  git checkout master && \
+  npm install && \
+  npm run build:release
 
 FROM nginx
 
