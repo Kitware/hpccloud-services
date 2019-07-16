@@ -26,3 +26,4 @@ If you want to stop the services you can run the command
 docker-compose down
 ```
 
+[Developent workflow][dev_workflow.md] has more complete instructions on troubleshooting and manual testing.
