@@ -40,6 +40,11 @@ RUN wget -q -O PyFR-1.8.0.zip http://www.pyfr.org/download/PyFR-1.8.0.zip && \
     unzip -qq PyFR-1.8.0.zip && \
     cd PyFR-1.8.0 && \
     python3 setup.py install && \
-    cd /
+    cd / \
+    chown -R celery  /PyFR-1.8.0
 
-RUN chown -R celery  /PyFR-1.8.0
+# TMP DBG
+COPY --chown=celery:root ./cumulus/cumulus/ansible/tasks /cumulus/cumulus/ansible/tasks
+COPY --chown=celery:root ./cumulus/cumulus/templates /cumulus/cumulus/templates
+COPY --chown=celery:root ./cumulus/cumulus/queue /cumulus/cumulus/queue
+COPY --chown=celery:root ./__init__.py /hpccloud/server/taskflows/hpccloud/taskflow/pyfr/__init__.py

@@ -10,18 +10,18 @@ RUN adduser --system celery
 RUN git clone https://github.com/Kitware/cumulus.git /cumulus && \
   cd /cumulus && \
   # git checkout v1.0.0 && \
-  cd / && \
-  pip3 install --no-cache-dir -r /cumulus/requirements.txt && \
-  pip3 install --no-cache-dir -e /cumulus && \
-  pip3 install --no-cache-dir girder
+  cd /
 
 # TEMP cumulus fix - requirements.txt needs to be updated for AWS, in progress.
 # COPY ./cumulus/cumulus/girderclient.py /cumulus/cumulus/girderclient.py
-# COPY ./cumulus/cumulus/ansible/tasks/cluster.py /cumulus/cumulus/ansible/tasks/cluster.py
-# COPY ./cumulus/requirements.txt /cumulus/requirements.txt
-# RUN  cd / && pip install --no-cache-dir -r /cumulus/requirements.txt && \
-#   pip install --no-cache-dir -e /cumulus && \
-#   pip install --no-cache-dir girder
+COPY ./cumulus/cumulus/ansible/tasks/cluster.py /cumulus/cumulus/ansible/tasks/cluster.py
+COPY ./cumulus/cumulus/ansible/tasks/playbooks/library/girder.py /cumulus/cumulus/ansible/tasks/playbooks/library/girder.py
+COPY ./cumulus/cumulus/ansible/tasks/playbooks/roles/ec2-pod/defaults/main.yml /cumulus/cumulus/ansible/tasks/playbooks/roles/ec2-pod/defaults/main.yml
+COPY ./cumulus/cumulus/ansible/tasks/playbooks/roles/ec2-pod/tasks/launch.yml /cumulus/cumulus/ansible/tasks/playbooks/roles/ec2-pod/tasks/launch.yml
+COPY ./cumulus/requirements.txt /cumulus/requirements.txt
+RUN  cd / && pip install --no-cache-dir -r /cumulus/requirements.txt && \
+  pip install --no-cache-dir -e /cumulus && \
+  pip install --no-cache-dir girder
 
 # Set the broker URL
 RUN sed -i s/localhost/rabbitmq/g /cumulus/cumulus/celery/commonconfig.py
