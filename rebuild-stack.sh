@@ -1,6 +1,6 @@
 #!/bin/bash
 
-PROJECT_DIRECTORY="/data/scott/projects/hpccloud-services"
+PROJECT_DIRECTORY="$(dirname $0)"
 
 # Exit as soon as any of these builds fail
 set -e
@@ -41,7 +41,8 @@ docker build --rm --no-cache --file docker/visualize-osmesa/Dockerfile -t kitwar
 #----------------------------------------------------------------------------
 
 echo -e "\n\n\nBuilding kitware/hpccloud:visualize-egl \n\n\n"
-docker build --rm --no-cache --file docker/visualize-egl/Dockerfile --build-arg PARAVIEW_TAG=v5.6.1 --build-arg SUPERBUILD_TAG=v5.6.1 -t kitware/hpccloud:visualize-egl .
+# docker build --rm --no-cache --file docker/visualize-egl/Dockerfile --build-arg PARAVIEW_TAG=v5.6.1 --build-arg SUPERBUILD_TAG=v5.6.1 -t kitware/hpccloud:visualize-egl .
+docker build --rm --no-cache --file docker/visualize-egl/Dockerfile -t kitware/hpccloud:visualize-egl .
 
 #----------------------------------------------------------------------------
 #                                compute-pyfr
