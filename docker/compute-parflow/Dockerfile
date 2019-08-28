@@ -1,28 +1,30 @@
 # Docker file for compute Parflow
 
-FROM kitware/hpccloud:sge-ssh
+ARG BASE_IMAGE=kitware/hpccloud:sge-ssh
+
+FROM ${BASE_IMAGE}
 LABEL maintainer="patrick.oleary@kitware.com" \
       version="1.0" \
       parflow.version="master"
 
 RUN apt-get update && \
-    apt-get install -y build-essential \
-                       gcc-6 \
-                       g++-6 \
-                       g++-6-multilib \
-                       gfortran-6 \
-                       openmpi-bin \
-                       libopenmpi-dev \
-                       git \
-                       curl \
-                       cmake \
-                       strace \
-                       unzip \
-                       wget \
-                       --no-install-recommends && \
+    apt-get install -y --no-install-recommends \
+        gcc-6 \
+        g++-6 \
+        g++-6-multilib \
+        gfortran-6 \
+        openmpi-bin \
+        libopenmpi-dev \
+        git \
+        curl \
+        cmake \
+        strace \
+        unzip \
+        wget && \
     update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-6 60 \
                         --slave /usr/bin/g++ g++ /usr/bin/g++-6 \
-                        --slave /usr/bin/gfortran gfortran /usr/bin/gfortran-6
+                        --slave /usr/bin/gfortran gfortran /usr/bin/gfortran-6 && \
+    apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Allow root to mpiexec (not in current openmpi version for Ubuntu 18.04)
 #ENV OMPI_ALLOW_RUN_AS_ROOT=1
@@ -74,5 +76,3 @@ RUN git clone https://gitlab.kitware.com/parflow/parflow.git parflow && \
 
 # Allow root to run mpiexec (kludge)
 COPY ./docker/celery-parflow/run /parflow/bin/run
-
-RUN apt-get clean && rm -rf /var/lib/apt/lists/*

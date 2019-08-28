@@ -2,4 +2,4 @@ ansible_connection: ssh
 ansible_user: demo
 ansible_ssh_pass: letmein
 ansible_ssh_extra_args: '-o StrictHostKeyChecking=no'
-ansible_python_interpreter: /usr/local/bin/python
+ansible_python_interpreter: /usr/bin/python3

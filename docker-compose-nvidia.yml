@@ -1,0 +1,39 @@
+# Go back to an older compose format version due to a bug
+# where 'runtime' is available in version 2.3 but not 3
+#   https://github.com/docker/compose/issues/6239
+version: '2.3'
+services:
+
+  compute:
+    image: kitware/hpccloud:nvidia-compute-pyfr
+    build:
+      context: .
+      dockerfile: docker/compute-pyfr/Dockerfile
+      args:
+        - BASE_IMG=kitware/hpccloud:nvidia-sge-ssh
+    hostname: compute
+    runtime: nvidia
+    volumes:
+     - scratch.hc:/scratch
+    networks:
+      - hc
+    ports:
+      - "2201:22"
+
+  visualize:
+    image: kitware/hpccloud:visualize-egl
+    build:
+      context: .
+      dockerfile: docker/visualize-egl/Dockerfile
+      args:
+        - PARAVIEW_TAG=v5.6.1
+        - SUPERBUILD_TAG=v5.6.1
+    hostname: visualize
+    runtime: nvidia
+    volumes:
+     - scratch.hc:/scratch
+    networks:
+      - hc
+    ports:
+      - "2202:22"
+      - "9090:9090"

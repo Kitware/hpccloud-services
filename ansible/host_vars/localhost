@@ -1,3 +1,4 @@
+ansible_python_interpreter: "/usr/local/bin/python"
 dev: yes
 girder_host: girder
 girder_port: 8080

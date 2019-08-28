@@ -7,11 +7,11 @@ RUN git clone https://github.com/Kitware/cumulus.git /cumulus && \
   cd /cumulus && \
   git checkout master && \
   cd / && \
-  pip install --no-cache-dir -r /cumulus/requirements.txt && \
-  pip install --no-cache-dir -e /cumulus && \
-  pip install --no-cache-dir -e /cumulus/girder/cumulus && \
-  pip install --no-cache-dir -e /cumulus/girder/sftp && \
-  pip install --no-cache-dir -e /cumulus/girder/taskflow
+  pip3 install --no-cache-dir -r /cumulus/requirements.txt && \
+  pip3 install --no-cache-dir -e /cumulus && \
+  pip3 install --no-cache-dir -e /cumulus/girder/cumulus && \
+  pip3 install --no-cache-dir -e /cumulus/girder/sftp && \
+  pip3 install --no-cache-dir -e /cumulus/girder/taskflow
 
 # Set the broker URL
 RUN sed -i s/localhost/rabbitmq/g /cumulus/cumulus/celery/commonconfig.py
@@ -28,9 +28,6 @@ RUN echo 'test1' > testx && rm testx && \
   git checkout master
 
 # Install hpccloud - girder server
-RUN pip install --no-cache-dir -r /hpccloud/requirements.txt && \
-  pip install --no-cache-dir -e /hpccloud/server/hpccloud && \
-  pip install --no-cache-dir -e /hpccloud/server/pvwproxy
-
-# Install clean up
-RUN apt-get clean && rm -rf /var/lib/apt/lists/*
+RUN pip3 install --no-cache-dir -r /hpccloud/requirements.txt && \
+    pip3 install --no-cache-dir -e /hpccloud/server/hpccloud && \
+    pip3 install --no-cache-dir -e /hpccloud/server/pvwproxy
