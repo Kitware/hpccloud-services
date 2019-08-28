@@ -1,5 +1,25 @@
 # Development workflow
 
+### Nvidia runtime and Docker 19.03
+
+The nvidia runtime is only supported on Linux, not Mac or Windows. If you start with Docker 19.03, nvidia gpus are supported by default, by doing `docker run --gpus all`. However, it doesn't support the older plugin syntax `docker run --runtime=nvidia`, and docker-compose doesn't support the `--gpus` arg yet. Here's the [steps to make it work](https://github.com/docker/compose/issues/6691#issuecomment-525245786)
+* `sudo apt-get install nvidia-container-runtime`
+* Add a daemon config file:
+```
+sudo tee /etc/docker/daemon.json <<EOF
+{
+    "runtimes": {
+        "nvidia": {
+            "path": "/usr/bin/nvidia-container-runtime",
+            "runtimeArgs": []
+        }
+    }
+}
+EOF
+sudo pkill -SIGHUP dockerd
+```
+* Defaults to using all gpus, but the [env var](https://github.com/NVIDIA/nvidia-container-runtime#environment-variables-oci-spec) `NVIDIA_VISIBLE_DEVICES` can change it.
+
 ### Complete PyFR walkthrough
 
 Clone the repo and start the containers as in the [readme][Readme.md].
@@ -23,15 +43,15 @@ Start a simulation, and visualize
 * Set simulation params
   * Click on the simulation summary line in the list
   * click `Input`, `Solver`,
-    * change `Shock capturing` to `none`
-    * change `Final time` to `1.0` or similar, for shorter runtime.
+    * Now default: change `Shock capturing` to `none`
+    * Now default: change `Final time` to `1.0` or similar, for shorter runtime.
   * click `Simulation` on the left
     * Leave all defaults (unless intend to run on AWS, then `Server Type` becomes `EC2`)
     * click `run simulation`
 * Monitor simulation
   * `Jobs` shows the running sim. Gear icon expands to show details and logs
   * expect `complete(6) running (2)` while the main sim is running, for a few minutes. Then output is uploaded.
-  * Final will show `complete (12)` and `Output Files files(51)`
+  * Final will show `complete (12)` and `Output Files files(29)`
   * click `Visualize`
 * ParaViewWeb Visualizer
   * leave default params, click `Start visualization`
@@ -40,6 +60,7 @@ Start a simulation, and visualize
     * click `couette_flow_2d` and change from `solid color` to `(p2) Velocity`
     * on colormap, click gear then double arrow on left, and clock at the bottow, to get data range over all time steps.
     * in titlebar, click play icon to see animation of flow over time.
+      * nvidia runtime should animate noticably faster.
 
 ### Useful commands
 * `docker container ls` shows running containers
@@ -62,6 +83,7 @@ clean start:
   * removes the persistent volumes not in use by containers, so if all containers are stopped, removes everything.
   * this resets the girder storage, so you have to re-create the project and simulation from scratch, as described above
   * I've needed this a few times when the ansible container says `FAILED The error was: 'dict object' has no attribute '_id'` on the `Wait for compute cluster` step.
+  * Useful tool, [lazydocker](https://github.com/jesseduffield/lazydocker)
 
 ### Troubleshooting
 Ansible
