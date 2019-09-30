@@ -13,8 +13,8 @@ RUN apt-get update && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Install ParaView 5.6.0
-RUN wget -q -O ParaView-5.6.0.tar.xz https://www.paraview.org/files/v5.6/ParaView-5.6.0-osmesa-MPI-Linux-64bit.tar.xz && \
-    tar xf ParaView-5.6.0.tar.xz && \
-    mv ParaView-5.6.0-osmesa-MPI-Linux-64bit ParaView
+RUN wget -q -O ParaView-5.6.1.tar.xz https://www.paraview.org/files/v5.6/ParaView-5.6.1-osmesa-MPI-Linux-64bit.tar.xz && \
+    tar xf ParaView-5.6.1.tar.xz && \
+    mv ParaView-5.6.1-osmesa-MPI-Linux-64bit ParaView
 
 EXPOSE 9090
