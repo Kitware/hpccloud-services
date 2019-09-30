@@ -111,28 +111,28 @@
 - name: Set 1st cluster to compute cluster from output
   set_fact:
     compute_cluster: "{{ clusters.gc_return[0] }}"
-  when: 
+  when:
     - clusters.gc_return|length == 2
     - clusters.gc_return[0].name == "compute"
 
 - name: Set 1st cluster to visualize cluster from output
   set_fact:
     visualize_cluster: "{{ clusters.gc_return[0] }}"
-  when: 
+  when:
     - clusters.gc_return|length == 2
     - clusters.gc_return[0].name == "visualize"
 
 - name: Set 2nd cluster to compute cluster from output
   set_fact:
     compute_cluster: "{{ clusters.gc_return[1] }}"
-  when: 
+  when:
     - clusters.gc_return|length == 2
     - clusters.gc_return[1].name == "compute"
 
 - name: Set 2nd cluster to visualize cluster from output
   set_fact:
     visualize_cluster: "{{ clusters.gc_return[1] }}"
-  when: 
+  when:
     - clusters.gc_return|length == 2
     - clusters.gc_return[1].name == "visualize"
 
@@ -165,6 +165,12 @@
 - name: Set compute_cluster from output
   set_fact:
     compute_cluster: "{{ compute_cluster.gc_return }}"
+
+- name: Wait until compute is ready for ssh connection
+  wait_for:
+    host=compute
+    port=22
+    delay=5
 
 - name: Add public key to authorize_keys on compute cluster
   authorized_key:
@@ -223,6 +229,12 @@
 - name: Set visualize_cluster from output
   set_fact:
     visualize_cluster: "{{ visualize_cluster.gc_return }}"
+
+- name: Wait until visualize is ready for ssh connection
+  wait_for:
+    host=visualize
+    port=22
+    delay=5
 
 - name: Add public key to authorize_keys on visualize cluster
   authorized_key:
