@@ -43,17 +43,17 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         pkg-config \
         wget && \
     rm -rf /var/lib/apt/lists/* && \
-    pip install mako
+    python2 -m pip install mako
 
 RUN mkdir -p /home/demo/cmake/3.13.4 && \
-    mkdir -p /home/demo/pvsb/build
+    mkdir -p /home/demo/pvsb/longerpathlongerpathlongerpathlongerpath/build
 
 COPY ./docker/visualize-egl/cmake/Docker-Ubuntu-18_04.cmake /home/demo/pvsb/Docker-Ubuntu-18_04.cmake
 
 # Get CMake, then clone the ParaView superbuild project
 RUN cd /home/demo/cmake/3.13.4 && \
     curl -L https://cmake.org/files/v3.13/cmake-3.13.4-Linux-x86_64.tar.gz | tar --strip-components=1 -xzv && \
-    cd /home/demo/pvsb && \
+    cd /home/demo/pvsb/longerpathlongerpathlongerpathlongerpath && \
     git clone --recursive ${SUPERBUILD_REPO} src && \
     cd src && git checkout ${SUPERBUILD_TAG} && git submodule update && cd .. && \
     cd build && \

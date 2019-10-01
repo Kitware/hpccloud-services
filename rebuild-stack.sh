@@ -41,8 +41,7 @@ docker build --rm --no-cache --file docker/visualize-osmesa/Dockerfile -t kitwar
 #----------------------------------------------------------------------------
 
 echo -e "\n\n\nBuilding kitware/hpccloud:visualize-egl \n\n\n"
-# docker build --rm --no-cache --file docker/visualize-egl/Dockerfile --build-arg PARAVIEW_TAG=v5.6.1 --build-arg SUPERBUILD_TAG=v5.6.1 -t kitware/hpccloud:visualize-egl .
-docker build --rm --no-cache --file docker/visualize-egl/Dockerfile -t kitware/hpccloud:visualize-egl .
+docker build --rm --no-cache --file docker/visualize-egl/Dockerfile --build-arg PARAVIEW_TAG=v5.6.1 --build-arg SUPERBUILD_TAG=v5.6.1 -t kitware/hpccloud:visualize-egl .
 
 #----------------------------------------------------------------------------
 #                                compute-pyfr
@@ -58,11 +57,11 @@ docker build --rm --no-cache --file docker/compute-pyfr/Dockerfile --build-arg B
 #                                compute-parflow
 #----------------------------------------------------------------------------
 
-echo -e "\n\n\nBuilding kitware/hpccloud:compute-parflow \n\n\n"
-docker build --rm --no-cache --file docker/compute-parflow/Dockerfile -t kitware/hpccloud:compute-parflow .
+# echo -e "\n\n\nBuilding kitware/hpccloud:compute-parflow \n\n\n"
+# docker build --rm --no-cache --file docker/compute-parflow/Dockerfile -t kitware/hpccloud:compute-parflow .
 
-echo -e "\n\n\nBuilding kitware/hpccloud:nvidia-compute-parflow \n\n\n"
-docker build --rm --no-cache --file docker/compute-parflow/Dockerfile --build-arg BASE_IMAGE=kitware/hpccloud:nvidia-sge-ssh -t kitware/hpccloud:nvidia-compute-parflow .
+# echo -e "\n\n\nBuilding kitware/hpccloud:nvidia-compute-parflow \n\n\n"
+# docker build --rm --no-cache --file docker/compute-parflow/Dockerfile --build-arg BASE_IMAGE=kitware/hpccloud:nvidia-sge-ssh -t kitware/hpccloud:nvidia-compute-parflow .
 
 #----------------------------------------------------------------------------
 #                                  celery
@@ -82,8 +81,8 @@ docker build --rm --no-cache --file docker/celery-pyfr/Dockerfile -t kitware/hpc
 #                                celery-parflow
 #----------------------------------------------------------------------------
 
-echo -e "\n\n\nBuilding kitware/hpccloud:celery-parflow \n\n\n"
-docker build --rm --no-cache --file docker/celery-parflow/Dockerfile -t kitware/hpccloud:celery-parflow .
+# echo -e "\n\n\nBuilding kitware/hpccloud:celery-parflow \n\n\n"
+# docker build --rm --no-cache --file docker/celery-parflow/Dockerfile -t kitware/hpccloud:celery-parflow .
 
 #----------------------------------------------------------------------------
 #                                  ansible

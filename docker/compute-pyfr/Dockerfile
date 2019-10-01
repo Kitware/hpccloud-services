@@ -37,7 +37,7 @@ RUN pip3 install appdirs \
                  h5py
 
 # Install PyFR 1.8.0
-RUN wget -q -O PyFR-1.8.0.zip http://www.pyfr.org/download/PyFR-1.8.0.zip && \
+RUN wget -q -O PyFR-1.8.0.zip https://github.com/PyFR/PyFR/archive/v1.8.0.zip && \
     unzip -qq PyFR-1.8.0.zip && \
     cd PyFR-1.8.0 && \
     python3 setup.py install

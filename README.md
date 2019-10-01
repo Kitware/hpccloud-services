@@ -9,6 +9,17 @@ Streamline a test deployment environment.
 ```
 git clone https://github.com/Kitware/hpccloud-services.git
 cd hpccloud-services
+```
+
+If you have run the system before, you may need to re-pull the stack of images:
+
+```
+docker-compose pull
+```
+
+And then you can bring the system up with:
+
+```
 docker-compose up -d
 ```
 

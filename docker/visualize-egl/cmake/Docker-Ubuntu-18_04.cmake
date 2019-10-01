@@ -20,6 +20,7 @@ set(EGL_opengl_LIBRARY "/usr/lib/x86_64-linux-gnu/libOpenGL.so" CACHE FILEPATH "
 
 # Turn off index as it doesn't seem to work
 set(ENABLE_nvidiaindex OFF CACHE BOOL "")
+set(ENABLE_visrtx OFF CACHE BOOL "")
 
 set(PV_CMAKE_ARGS "-DOpenGL_GL_PREFERENCE:STRING=GLVND")
 
@@ -46,7 +47,10 @@ set(PV_CMAKE_ARGS "${PV_CMAKE_ARGS};-DPython2_EXECUTABLE:FILEPATH=/usr/bin/pytho
 set(PV_CMAKE_ARGS "${PV_CMAKE_ARGS};-DPython2_LIBRARY_RELEASE:FILEPATH=/usr/lib/x86_64-linux-gnu/libpython2.7.so")
 set(PV_CMAKE_ARGS "${PV_CMAKE_ARGS};-DPython2_INCLUDE_DIR:PATH=/usr/include/python2.7")
 
-set(USE_SYSTEM_python ON CACHE BOOL "")
+set(ENABLE_python2 ON CACHE BOOL "")
+set(USE_SYSTEM_python2 ON CACHE BOOL "")
+set(ENABLE_python3 OFF CACHE BOOL "")
+set(USE_SYSTEM_python3 OFF CACHE BOOL "")
 set(USE_SYSTEM_pythonsetuptools ON CACHE BOOL "")
 set(ENABLE_matplotlib ON CACHE BOOL "")
 set(ENABLE_scipy ON CACHE BOOL "")
