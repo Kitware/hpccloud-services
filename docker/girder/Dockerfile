@@ -31,3 +31,8 @@ RUN echo 'test1' > testx && rm testx && \
 RUN pip3 install --no-cache-dir -r /hpccloud/requirements.txt && \
     pip3 install --no-cache-dir -e /hpccloud/server/hpccloud && \
     pip3 install --no-cache-dir -e /hpccloud/server/pvwproxy
+
+COPY ./docker/girder/entrypoint.sh /entrypoint.sh
+COPY ./docker/girder/wait-for-it.sh /wait-for-it.sh
+
+ENTRYPOINT ["/wait-for-it.sh", "-t", "30", "rabbitmq:5672",  "--", "/entrypoint.sh"]
