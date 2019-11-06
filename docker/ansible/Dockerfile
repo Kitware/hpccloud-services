@@ -7,7 +7,7 @@ RUN apt-get update && \
         sshpass && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
 
-RUN pip3 install ansible \
+RUN pip3 install ansible==2.8.2 \
                  girder_client
 
 COPY ./ansible /ansible
