@@ -5,8 +5,11 @@ LABEL maintainer="patrick.oleary@kitware.com" \
       version="1.0" \
       parflow.version="master"
 
+ENV DEBIAN_FRONTEND=noninteractive
+
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
+        wget \
         gcc-6 \
         g++-6 \
         g++-6-multilib \
@@ -17,7 +20,10 @@ RUN apt-get update && \
         openssh-server \
         openmpi-bin \
         libopenmpi-dev \
-        cmake && \
+        tcl-dev \
+        tk-dev \
+        cmake \
+        cmake-curses-gui && \
     update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-6 60 \
                         --slave /usr/bin/g++ g++ /usr/bin/g++-6 \
                         --slave /usr/bin/gfortran gfortran /usr/bin/gfortran-6 && \
@@ -28,48 +34,34 @@ RUN apt-get update && \
 #ENV OMPI_ALLOW_RUN_AS_ROOT_CONFIRM=1
 
 # ParFlow environment variables
-ENV SILO_DIR=/silo
 ENV HYPRE_DIR=/hypre
 ENV PARFLOW_DIR=/parflow
 
-# Install silo
-RUN curl "https://wci.llnl.gov/content/assets/docs/simulation/computer-codes/silo/silo-4.10.2/silo-4.10.2.tar.gz" -o "silo-4.10.2.tar.gz" && \
-    tar -xvf silo-4.10.2.tar.gz && \
-    cd /silo-4.10.2 && \
-    ./configure --prefix=/silo \
-                --disable-silex \
-                --disable-hzip \
-                --disable-fpzip && \
-    make install && \
-    cd / && \
-    rm -rf silo-4.10.2*
-
 # Install hypre
-RUN git clone https://github.com/LLNL/hypre.git hypre-tmp && \
-    cd /hypre-tmp/src && \
-    ./configure --prefix=/hypre \
-                --with-MPI && \
+RUN wget -q https://github.com/hypre-space/hypre/archive/v2.17.0.tar.gz && \
+    tar xf v2.17.0.tar.gz && \
+    cd hypre-2.17.0/src && \
+    ./configure --prefix=/hypre --with-MPI && \
     make install && \
     cd / && \
-    rm -rf hypre-tmp
+    rm -fr hypre-2.17.0 v2.17.0.tar.gz
 
 # Intall parflow
-RUN git clone https://gitlab.kitware.com/parflow/parflow.git parflow && \
-    cd /parflow/pfsimulator && \
-    ./configure --prefix=/parflow \
-                --with-clm \
-                --enable-timing \
-                --with-silo=/silo \
-                --with-hypre=/hypre \
-                --with-amps=mpi1 \
-                --with-mpi && \
-    make install && \
-    cd /parflow/pftools && \
-    ./configure --prefix=/parflow \
-                --with-silo=/silo \
-                --with-amps=mpi1 && \
-    make install && \
-    cd /
+RUN git clone -b master --single-branch https://github.com/parflow/parflow.git /parflow-tmp
 
-# Allow root to run mpiexec (kludge)
-COPY ./docker/celery-parflow/run /parflow/bin/run
+ENV PARFLOW_MPIEXEC_EXTRA_FLAGS "--mca mpi_yield_when_idle 1 --oversubscribe --allow-run-as-root"
+
+RUN mkdir -p /build && \
+    cd /build && \
+    cmake ../parflow-tmp \
+       -DPARFLOW_AMPS_LAYER=mpi1 \
+       -DPARFLOW_AMPS_SEQUENTIAL_IO=TRUE \
+       -DHYPRE_ROOT=/hypre \
+       -DPARFLOW_ENABLE_TIMING=TRUE \
+       -DPARFLOW_HAVE_CLM=TRUE \
+       -DCMAKE_INSTALL_PREFIX=/parflow && \
+    make install && \
+    cd / && \
+    rm -fr /parflow-tmp /build
+
+RUN chown -R celery  /parflow
