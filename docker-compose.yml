@@ -116,6 +116,7 @@ services:
     hostname: compute
     volumes:
      - scratch.hc:/scratch
+     - /var/run/docker.sock:/var/run/docker.sock:rw
     networks:
       - hc
     ports:
