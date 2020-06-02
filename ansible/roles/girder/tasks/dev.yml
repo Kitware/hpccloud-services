@@ -54,6 +54,9 @@
         "type": "trad",
         "config": {
           "host": compute,
+          "scheduler": {
+            "type": "slurm"
+          },
           "ssh": {
             "user": "demo"
           },
@@ -90,6 +93,9 @@
         "name": "visualize",
         "type": "trad",
         "config": {
+          "scheduler": {
+            "type": "slurm"
+          },
           "host": visualize,
           "ssh": {
             "user": "demo"
