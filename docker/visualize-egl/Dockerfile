@@ -15,7 +15,7 @@
 #     "master", "v5.6.0", <branch-name>, etc...
 #
 
-FROM kitware/hpccloud:nvidia-sge-ssh
+FROM kitware/hpccloud:nvidia-slurm-ssh
 
 LABEL maintainer="patrick.oleary@kitware.com" \
       version="1.0" \

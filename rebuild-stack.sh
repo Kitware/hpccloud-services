@@ -20,14 +20,14 @@ echo -e "\n\n\nBuilding kitware/hpccloud:nvidia-bionic-python \n\n\n"
 docker build --pull --rm --no-cache --file docker/bionic-python/Dockerfile --build-arg BASE_IMAGE=nvidia/opengl:1.0-glvnd-devel-ubuntu18.04 -t kitware/hpccloud:nvidia-bionic-python .
 
 #----------------------------------------------------------------------------
-#                                  sge-ssh
+#                                  slurm-ssh
 #----------------------------------------------------------------------------
 
-echo -e "\n\n\nBuilding kitware/hpccloud:sge-ssh \n\n\n"
-docker build --rm --no-cache --file docker/sge-ssh/Dockerfile -t kitware/hpccloud:sge-ssh .
+echo -e "\n\n\nBuilding kitware/hpccloud:slurm-ssh \n\n\n"
+docker build --rm --no-cache --file docker/slurm-ssh/Dockerfile -t kitware/hpccloud:slurm-ssh .
 
-echo -e "\n\n\nBuilding kitware/hpccloud:nvidia-sge-ssh \n\n\n"
-docker build --rm --no-cache --file docker/sge-ssh/Dockerfile --build-arg BASE_IMAGE=kitware/hpccloud:nvidia-bionic-python -t kitware/hpccloud:nvidia-sge-ssh .
+echo -e "\n\n\nBuilding kitware/hpccloud:nvidia-slurm-ssh \n\n\n"
+docker build --rm --no-cache --file docker/slurm-ssh/Dockerfile --build-arg BASE_IMAGE=kitware/hpccloud:nvidia-bionic-python -t kitware/hpccloud:nvidia-slurm-ssh .
 
 #----------------------------------------------------------------------------
 #                              visualize-osmesa
@@ -51,7 +51,7 @@ echo -e "\n\n\nBuilding kitware/hpccloud:compute-pyfr \n\n\n"
 docker build --rm --no-cache --file docker/compute-pyfr/Dockerfile -t kitware/hpccloud:compute-pyfr .
 
 echo -e "\n\n\nBuilding kitware/hpccloud:nvidia-compute-pyfr \n\n\n"
-docker build --rm --no-cache --file docker/compute-pyfr/Dockerfile --build-arg BASE_IMAGE=kitware/hpccloud:nvidia-sge-ssh -t kitware/hpccloud:nvidia-compute-pyfr .
+docker build --rm --no-cache --file docker/compute-pyfr/Dockerfile --build-arg BASE_IMAGE=kitware/hpccloud:nvidia-slurm-ssh -t kitware/hpccloud:nvidia-compute-pyfr .
 
 #----------------------------------------------------------------------------
 #                                compute-parflow
@@ -61,7 +61,7 @@ docker build --rm --no-cache --file docker/compute-pyfr/Dockerfile --build-arg B
 # docker build --rm --no-cache --file docker/compute-parflow/Dockerfile -t kitware/hpccloud:compute-parflow .
 
 # echo -e "\n\n\nBuilding kitware/hpccloud:nvidia-compute-parflow \n\n\n"
-# docker build --rm --no-cache --file docker/compute-parflow/Dockerfile --build-arg BASE_IMAGE=kitware/hpccloud:nvidia-sge-ssh -t kitware/hpccloud:nvidia-compute-parflow .
+# docker build --rm --no-cache --file docker/compute-parflow/Dockerfile --build-arg BASE_IMAGE=kitware/hpccloud:nvidia-slurm-ssh -t kitware/hpccloud:nvidia-compute-parflow .
 
 #----------------------------------------------------------------------------
 #                                  celery
