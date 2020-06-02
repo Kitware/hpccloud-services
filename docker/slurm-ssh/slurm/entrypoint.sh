@@ -32,5 +32,15 @@ service munge start
 service slurmctld start
 service slurmd start
 
+# Setup docker group
+DOCKER_SOCKET=/var/run/docker.sock
+DOCKER_GROUP=docker
+
+if [[ -S ${DOCKER_SOCKET} && $(getent group ${DOCKER_GROUP}) ]]; then
+   DOCKER_GID=$(stat -c '%g' ${DOCKER_SOCKET})
+   groupmod -g ${DOCKER_GID} ${DOCKER_GROUP}
+   usermod -aG ${DOCKER_GROUP} demo
+fi
+
 # Run whatever the user wants to
 exec "$@"
