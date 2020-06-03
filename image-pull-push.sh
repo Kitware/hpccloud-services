@@ -5,8 +5,8 @@
 
 # docker image rm kitware/hpccloud:bionic-python
 # docker image rm kitware/hpccloud:nvidia-bionic-python
-# docker image rm kitware/hpccloud:sge-ssh
-# docker image rm kitware/hpccloud:nvidia-sge-ssh
+# docker image rm kitware/hpccloud:slurm-ssh
+# docker image rm kitware/hpccloud:nvidia-slurm-ssh
 # docker image rm kitware/hpccloud:visualize-osmesa
 # docker image rm kitware/hpccloud:visualize-egl
 # docker image rm kitware/hpccloud:compute-pyfr
@@ -19,8 +19,8 @@
 
 # docker pull kitware/hpccloud:bionic-python
 # docker pull kitware/hpccloud:nvidia-bionic-python
-# docker pull kitware/hpccloud:sge-ssh
-# docker pull kitware/hpccloud:nvidia-sge-ssh
+# docker pull kitware/hpccloud:slurm-ssh
+# docker pull kitware/hpccloud:nvidia-slurm-ssh
 # docker pull kitware/hpccloud:visualize-osmesa
 # docker pull kitware/hpccloud:visualize-egl
 # docker pull kitware/hpccloud:compute-pyfr
@@ -36,8 +36,8 @@
 
 docker push kitware/hpccloud:bionic-python
 docker push kitware/hpccloud:nvidia-bionic-python
-docker push kitware/hpccloud:sge-ssh
-docker push kitware/hpccloud:nvidia-sge-ssh
+docker push kitware/hpccloud:slurm-ssh
+docker push kitware/hpccloud:nvidia-slurm-ssh
 docker push kitware/hpccloud:visualize-osmesa
 docker push kitware/hpccloud:visualize-egl
 docker push kitware/hpccloud:compute-pyfr

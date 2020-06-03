@@ -19,9 +19,6 @@ node_info=$(slurmd -C)
 node_name=$(echo "$node_info" | awk -F'[= ]' 'NR==1{print $2;}')
 cpus=$(echo "$node_info" | awk -F'[= ]' 'NR==1{print $4;}')
 
-# Limit the cpus to half of the available
-cpus=$(( $cpus / 2 ))
-
 # Finish filling out the conf file based on the image and CPU info
 echo "NodeName=$node_name CPUs=$cpus State=UNKNOWN" >> $conf_file
 echo "PartitionName=debug Nodes=$node_name Default=YES MaxTime=INFINITE State=UP" >> $conf_file

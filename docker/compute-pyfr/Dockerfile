@@ -1,6 +1,6 @@
 # Docker file for compute PyFR 1.8.0
 
-ARG BASE_IMAGE=kitware/hpccloud:sge-ssh
+ARG BASE_IMAGE=kitware/hpccloud:slurm-ssh
 
 FROM ${BASE_IMAGE}
 LABEL maintainer="patrick.oleary@kitware.com" \

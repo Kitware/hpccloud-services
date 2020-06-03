@@ -10,7 +10,7 @@ services:
       context: .
       dockerfile: docker/compute-pyfr/Dockerfile
       args:
-        - BASE_IMG=kitware/hpccloud:nvidia-sge-ssh
+        - BASE_IMG=kitware/hpccloud:nvidia-slurm-ssh
     hostname: compute
     runtime: nvidia
     volumes:
